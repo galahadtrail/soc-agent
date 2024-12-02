@@ -1,9 +1,13 @@
+pub mod greetings;
+use greetings::print_hello_message;
+
 use notify::event::CreateKind;
 use notify::{recommended_watcher, Event, EventKind, RecursiveMode, Result, Watcher};
 use std::path::Path;
 use std::sync::mpsc;
 
 fn main() -> Result<()> {
+    print_hello_message();
     // Создаем канал для получения событий
     let (tx, rx) = mpsc::channel::<Result<Event>>();
 
