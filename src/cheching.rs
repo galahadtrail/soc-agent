@@ -1,9 +1,12 @@
-use sha3::{Digest, Keccak256FullCore, Sha3_256};
+use sha3::{Digest, Sha3_256};
 use std::fs::File;
 use std::io::{self, BufReader, BufWriter, Read, Write};
 use std::path::PathBuf;
 
-fn write_hash_rules_from_file(path_to_file: &str, rules: &mut Vec<String>) -> std::io::Result<()> {
+pub fn write_hash_rules_from_file(
+    path_to_file: &str,
+    rules: &mut Vec<String>,
+) -> std::io::Result<()> {
     let rules_jsoned: Vec<String> = rules
         .iter()
         .map(|rule| serde_json::to_string(rule).unwrap())
@@ -17,7 +20,7 @@ fn write_hash_rules_from_file(path_to_file: &str, rules: &mut Vec<String>) -> st
     Ok(())
 }
 
-fn read_hash_rules_from_file(path_to_file: &str) -> io::Result<Vec<String>> {
+pub fn read_hash_rules_from_file(path_to_file: &str) -> io::Result<Vec<String>> {
     let file = File::open(path_to_file)?;
     let reader = BufReader::new(file);
     let rules_raw: Vec<String> = serde_json::from_reader(reader)?;
