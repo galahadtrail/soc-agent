@@ -1,4 +1,7 @@
+pub mod cheching;
 pub mod greetings;
+
+use cheching::cheching_files_hash;
 use greetings::print_hello_message;
 
 use notify::event::CreateKind;
@@ -21,7 +24,10 @@ fn main() -> Result<()> {
         match res {
             Ok(event) => {
                 if event.kind == EventKind::Create(CreateKind::File) {
-                    println!("!")
+                    println!("{:?}", event.paths);
+                    for path in event.paths {
+                        cheching_files_hash(path);
+                    }
                 }
             }
             Err(e) => println!("error: {}", e),

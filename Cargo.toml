@@ -5,4 +5,6 @@ edition = "2021"
 
 [dependencies]
 colored = "2.1.0"
+hex = "0.4.3"
 notify = "5.0"
+sha3 = "0.10.8"
