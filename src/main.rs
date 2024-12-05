@@ -4,7 +4,7 @@ pub mod greetings;
 use cheching::cheching_files_hash;
 use greetings::print_hello_message;
 
-use notify::event::CreateKind;
+use notify::event::{CreateKind, ModifyKind};
 use notify::{recommended_watcher, Event, EventKind, RecursiveMode, Result, Watcher};
 use std::path::Path;
 use std::sync::mpsc;
@@ -28,6 +28,10 @@ fn main() -> Result<()> {
                     for path in event.paths {
                         cheching_files_hash(path);
                     }
+                }
+                if event.kind == EventKind::Modify(ModifyKind::Data(notify::event::DataChange::Any))
+                {
+                    println!("1");
                 }
             }
             Err(e) => println!("error: {}", e),

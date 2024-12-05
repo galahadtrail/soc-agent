@@ -1,7 +1,20 @@
-use sha3::{Digest, Sha3_256};
+use sha3::{Digest, Keccak256FullCore, Sha3_256};
 use std::fs::File;
 use std::io::{self, BufReader, Read};
 use std::path::PathBuf;
+
+fn read_hash_rules_from_file(path_to_file: &str) -> io::Result<Vec<String>> {
+    let file = File::open(path_to_file)?;
+    let reader = BufReader::new(file);
+    let rules_raw: Vec<String> = serde_json::from_reader(reader)?;
+
+    let rules_unjsoned: Vec<String> = rules_raw
+        .iter()
+        .map(|rule| serde_json::from_str(&rule).unwrap())
+        .collect();
+
+    Ok(rules_unjsoned)
+}
 
 pub fn cheching_files_hash(path_to_file: PathBuf) -> io::Result<()> {
     // Открываем файл для чтения
@@ -26,6 +39,7 @@ pub fn cheching_files_hash(path_to_file: PathBuf) -> io::Result<()> {
 
     // Выводим результат в шестнадцатеричном формате
     println!("SHA3-256 hash: {:x}", result);
+    let param = format!("{:x}", result);
 
     Ok(())
 }
