@@ -3,10 +3,7 @@ use std::fs::File;
 use std::io::{self, BufReader, BufWriter, Read, Write};
 use std::path::PathBuf;
 
-pub fn write_hash_rules_from_file(
-    path_to_file: &str,
-    rules: &mut Vec<String>,
-) -> std::io::Result<()> {
+pub fn write_hash_rules_from_file(path_to_file: &str, rules: Vec<String>) -> std::io::Result<()> {
     let rules_jsoned: Vec<String> = rules
         .iter()
         .map(|rule| serde_json::to_string(rule).unwrap())
@@ -48,7 +45,7 @@ pub fn cheching_files_hash(path_to_file: PathBuf) -> io::Result<()> {
         if bytes_read == 0 {
             break; // Конец файла
         }
-        hasher.update(&buffer[..bytes_read]); // Обновляем хеш
+        hasher.update(&buffer[..bytes_read].trim_ascii()); // Обновляем хеш
     }
 
     // Получаем финальный хеш
