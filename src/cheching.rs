@@ -30,16 +30,17 @@ pub fn read_hash_rules_from_file(path_to_file: &str) -> io::Result<Vec<String>> 
     Ok(rules_unjsoned)
 }
 
-pub fn matching_rules(rules: &Vec<String>, alert: &String) -> bool {
+pub fn matching_rules(rules: &Vec<String>, path_to_file: PathBuf) -> bool {
+    let hash_alert = cheching_files_hash(path_to_file).unwrap();
     for rule in rules.iter() {
-        if rule == alert {
+        if *rule == hash_alert {
             return true;
         }
     }
     false
 }
 
-pub fn cheching_files_hash(path_to_file: PathBuf) -> io::Result<()> {
+fn cheching_files_hash(path_to_file: PathBuf) -> io::Result<String> {
     // Открываем файл для чтения
     let file = File::open(path_to_file)?;
     let mut reader = BufReader::new(file);
@@ -60,9 +61,7 @@ pub fn cheching_files_hash(path_to_file: PathBuf) -> io::Result<()> {
     // Получаем финальный хеш
     let result = hasher.finalize();
 
-    // Выводим результат в шестнадцатеричном формате
-    println!("SHA3-256 hash: {:x}", result);
     let param = format!("{:x}", result);
 
-    Ok(())
+    Ok(param)
 }
