@@ -9,6 +9,11 @@ use notify::{recommended_watcher, Event, EventKind, RecursiveMode, Result, Watch
 use std::path::Path;
 use std::sync::mpsc;
 
+enum Privileges {
+    Admin,
+    User,
+}
+
 fn main() -> Result<()> {
     print_hello_message();
     // Создаем канал для получения событий
@@ -28,7 +33,6 @@ fn main() -> Result<()> {
                     || event.kind
                         == EventKind::Modify(ModifyKind::Data(notify::event::DataChange::Any))
                 {
-                    println!("{:?}", event.paths);
                     for path in event.paths.iter() {
                         let math_res = matching_rules(&rules, path.to_path_buf());
                         println!("{}", math_res);
