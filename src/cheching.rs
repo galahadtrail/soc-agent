@@ -30,6 +30,15 @@ pub fn read_hash_rules_from_file(path_to_file: &str) -> io::Result<Vec<String>> 
     Ok(rules_unjsoned)
 }
 
+pub fn matching_rules(rules: &Vec<String>, alert: &String) -> bool {
+    for rule in rules.iter() {
+        if rule == alert {
+            return true;
+        }
+    }
+    false
+}
+
 pub fn cheching_files_hash(path_to_file: PathBuf) -> io::Result<()> {
     // Открываем файл для чтения
     let file = File::open(path_to_file)?;

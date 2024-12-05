@@ -1,7 +1,7 @@
 pub mod cheching;
 pub mod greetings;
 
-use cheching::{cheching_files_hash, write_hash_rules_from_file};
+use cheching::{cheching_files_hash, read_hash_rules_from_file, write_hash_rules_from_file};
 use greetings::print_hello_message;
 
 use notify::event::{CreateKind, ModifyKind};
@@ -16,10 +16,7 @@ fn main() -> Result<()> {
 
     // Создаем объект watcher с задержкой 2 секунды
     let mut watcher = recommended_watcher(tx)?;
-    let str1 = String::from("92dad9443e4dd6d70a7f11872101ebff87e21798e4fbb26fa4bf590eb440e71b");
-    let str2 = String::from("a03ab19b866fc585b5cb1812a2f63ca861e7e7643ee5d43fd7106b623725fd67");
-    let vec = vec![str1, str2];
-    write_hash_rules_from_file("src/rules/rules.txt", vec);
+    let mut rules = read_hash_rules_from_file("src/rules/rules.txt");
 
     // Указываем директорию для отслеживания
     watcher.watch(Path::new("."), RecursiveMode::NonRecursive)?;
