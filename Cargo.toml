@@ -10,3 +10,4 @@ notify = "5.0"
 serde = "1.0.215"
 serde_json = "1.0.133"
 sha3 = "0.10.8"
+tokio = { version = "1", features = ["full"] }

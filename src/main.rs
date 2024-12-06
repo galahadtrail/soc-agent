@@ -1,4 +1,5 @@
 pub mod cheching;
+pub mod connection;
 pub mod greetings;
 
 use cheching::{matching_rules, read_hash_rules_from_file, write_hash_rules_from_file};
