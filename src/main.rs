@@ -18,13 +18,19 @@ enum Privileges {
 
 fn main() -> Result<()> {
     print_hello_message();
-    connect();
+    let new_rules_for_me = connect();
+
+    let new_rules: Vec<String> = new_rules_for_me
+        .split('@') // Используем split для разделения по запятой
+        .map(String::from)
+        .collect();
+    let rules = new_rules.clone();
+    let _ = write_hash_rules_from_file("src/rules/rules.txt", new_rules);
     // Создаем канал для получения событий
     let (tx, rx) = mpsc::channel::<Result<Event>>();
 
     // Создаем объект watcher с задержкой 2 секунды
     let mut watcher = recommended_watcher(tx)?;
-    let mut rules = read_hash_rules_from_file("src/rules/rules.txt")?;
 
     // Указываем директорию для отслеживания
     watcher.watch(Path::new("."), RecursiveMode::NonRecursive)?;
