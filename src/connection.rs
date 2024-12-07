@@ -1,33 +1,18 @@
-use std::io::{self, BufRead};
-use tokio::io::{AsyncBufReadExt, AsyncWriteExt};
-use tokio::net::TcpStream;
+use std::io::{Read, Write};
+use std::net::TcpStream;
+use std::str;
 
-#[tokio::main]
-pub async fn connect() -> io::Result<()> {
-    let socket = TcpStream::connect("127.0.0.1:8080").await?;
-    let (reader, mut writer) = socket.into_split();
+pub fn connect() {
+    // Подключаемся к серверу
+    let mut stream = TcpStream::connect("127.0.0.1:7878").unwrap();
 
-    // Чтение сообщений от сервера
-    tokio::spawn(async move {
-        let mut reader = tokio::io::BufReader::new(reader);
-        let mut buf = String::new();
+    // Читаем сообщение от сервера
+    let mut buffer = [0; 1024];
+    let bytes_read = stream.read(&mut buffer).unwrap();
+    let msg = str::from_utf8(&buffer[..bytes_read]).unwrap();
+    println!("Received from server: {}", msg);
 
-        loop {
-            buf.clear();
-            if reader.read_line(&mut buf).await.unwrap() == 0 {
-                break; // Соединение закрыто
-            }
-            println!("Получено сообщение: {}", buf);
-        }
-    });
-
-    // Отправка сообщений на сервер
-    let stdin = io::stdin();
-    let mut stdin_reader = stdin.lock();
-
-    loop {
-        let mut input = String::new();
-        stdin_reader.read_line(&mut input).unwrap();
-        writer.write_all(input.as_bytes()).await.unwrap();
-    }
+    // Отправляем ответ серверу
+    let response = "Hello from client!";
+    stream.write(response.as_bytes()).unwrap();
 }

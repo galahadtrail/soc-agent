@@ -3,6 +3,7 @@ pub mod connection;
 pub mod greetings;
 
 use cheching::{matching_rules, read_hash_rules_from_file, write_hash_rules_from_file};
+use connection::connect;
 use greetings::print_hello_message;
 
 use notify::event::{CreateKind, ModifyKind};
@@ -17,6 +18,7 @@ enum Privileges {
 
 fn main() -> Result<()> {
     print_hello_message();
+    connect();
     // Создаем канал для получения событий
     let (tx, rx) = mpsc::channel::<Result<Event>>();
 
