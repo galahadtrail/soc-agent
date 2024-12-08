@@ -2,7 +2,7 @@ pub mod cheching;
 pub mod connection;
 pub mod greetings;
 
-use cheching::{matching_rules, read_hash_rules_from_file, write_hash_rules_from_file};
+use cheching::{matching_rules, write_hash_rules_from_file};
 use connection::connect;
 use greetings::print_hello_message;
 
@@ -10,11 +10,6 @@ use notify::event::{CreateKind, ModifyKind};
 use notify::{recommended_watcher, Event, EventKind, RecursiveMode, Result, Watcher};
 use std::path::Path;
 use std::sync::mpsc;
-
-enum Privileges {
-    Admin,
-    User,
-}
 
 fn main() -> Result<()> {
     print_hello_message();
@@ -44,7 +39,6 @@ fn main() -> Result<()> {
                 {
                     for path in event.paths.iter() {
                         let math_res = matching_rules(&rules, path.to_path_buf());
-                        println!("{}", math_res);
                     }
                 }
             }

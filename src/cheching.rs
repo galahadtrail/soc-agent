@@ -17,19 +17,6 @@ pub fn write_hash_rules_from_file(path_to_file: &str, rules: Vec<String>) -> std
     Ok(())
 }
 
-pub fn read_hash_rules_from_file(path_to_file: &str) -> io::Result<Vec<String>> {
-    let file = File::open(path_to_file)?;
-    let reader = BufReader::new(file);
-    let rules_raw: Vec<String> = serde_json::from_reader(reader)?;
-
-    let rules_unjsoned: Vec<String> = rules_raw
-        .iter()
-        .map(|rule| serde_json::from_str(&rule).unwrap())
-        .collect();
-
-    Ok(rules_unjsoned)
-}
-
 pub fn matching_rules(rules: &Vec<String>, path_to_file: PathBuf) -> bool {
     let hash_alert = cheching_files_hash(path_to_file).unwrap();
     for rule in rules.iter() {
