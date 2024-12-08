@@ -9,6 +9,7 @@ use greetings::print_hello_message;
 use colored::*;
 use notify::event::{CreateKind, ModifyKind};
 use notify::{recommended_watcher, Event, EventKind, RecursiveMode, Result, Watcher};
+use std::fs::canonicalize;
 use std::io;
 use std::path::Path;
 use std::sync::mpsc;
@@ -18,17 +19,18 @@ fn main() -> Result<()> {
     print_hello_message();
 
     let alerts: Arc<Mutex<Vec<String>>> = Arc::new(Mutex::new(Vec::new()));
-    let alerts_clone = Arc::clone(&alerts);
+    let alerts_sendable: Arc<Mutex<Vec<String>>> = Arc::clone(&alerts);
+    let alerts_clone_wr = Arc::clone(&alerts);
 
     ctrlc::set_handler(move || {
         println!("Получен сигнал Ctrl+C! Выход из функции слежения");
-        let alerts = alerts_clone.lock().unwrap();
-        connect(&*alerts);
+        let alerts_clone = Arc::clone(&alerts);
+        connect(alerts_clone);
         std::process::exit(0);
     })
     .expect("Ошибка при установке обработчика Ctrl+C");
 
-    let new_rules_for_me = connect(&*alerts.lock().unwrap());
+    let new_rules_for_me = connect(alerts_sendable);
 
     let new_rules: Vec<String> = new_rules_for_me
         .split('@') // Используем split для разделения по запятой
@@ -63,10 +65,10 @@ fn main() -> Result<()> {
                     for path in event.paths.iter() {
                         let math_res = matching_rules(&rules, path.to_path_buf());
                         if math_res {
-                            alerts
+                            alerts_clone_wr
                                 .lock()
                                 .unwrap()
-                                .push(String::from(path.to_str().unwrap()));
+                                .push(String::from(canonicalize(path).unwrap().to_str().unwrap()));
                         }
                     }
                 }

@@ -1,8 +1,9 @@
 use std::io::{Read, Write};
 use std::net::TcpStream;
 use std::str;
+use std::sync::{Arc, Mutex};
 
-pub fn connect(alerts: &Vec<String>) -> String {
+pub fn connect(alerts: Arc<Mutex<Vec<String>>>) -> String {
     // Подключаемся к серверу
     let mut stream = TcpStream::connect("127.0.0.1:7878").unwrap();
 
@@ -16,8 +17,8 @@ pub fn connect(alerts: &Vec<String>) -> String {
     // Отправляем ответ серверу
     let mut response = String::new();
 
-    if alerts.len() != 0 {
-        response = alerts.join("@");
+    if alerts.lock().unwrap().len() != 0 {
+        response = alerts.lock().unwrap().join("@");
     } else {
         response = "Empty".to_string();
     }
