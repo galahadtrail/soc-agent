@@ -65,6 +65,10 @@ fn main() -> Result<()> {
                     for path in event.paths.iter() {
                         let math_res = matching_rules(&rules, path.to_path_buf());
                         if math_res {
+                            println!(
+                                "Achtung! {}",
+                                String::from(canonicalize(path).unwrap().to_str().unwrap())
+                            );
                             alerts_clone_wr
                                 .lock()
                                 .unwrap()
