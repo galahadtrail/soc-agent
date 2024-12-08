@@ -24,7 +24,7 @@ fn main() -> Result<()> {
         println!("Получен сигнал Ctrl+C! Выход из функции слежения");
         let alerts = alerts_clone.lock().unwrap();
         connect(&*alerts);
-        return;
+        std::process::exit(0);
     })
     .expect("Ошибка при установке обработчика Ctrl+C");
 
@@ -51,7 +51,7 @@ fn main() -> Result<()> {
     let _ = io::stdin().read_line(&mut path);
 
     // Указываем директорию для отслеживания
-    watcher.watch(Path::new(&path), RecursiveMode::NonRecursive)?;
+    watcher.watch(Path::new(&path.trim()), RecursiveMode::NonRecursive)?;
 
     for res in rx {
         match res {

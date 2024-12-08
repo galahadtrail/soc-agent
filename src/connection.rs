@@ -12,7 +12,6 @@ pub fn connect(alerts: &Vec<String>) -> String {
     let msg = str::from_utf8(&buffer[..bytes_read]).unwrap();
 
     let new_rules_for_me = String::from(msg);
-    println!("Received from server: {}", msg);
 
     // Отправляем ответ серверу
     let mut response = String::new();
