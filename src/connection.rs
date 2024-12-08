@@ -2,7 +2,7 @@ use std::io::{Read, Write};
 use std::net::TcpStream;
 use std::str;
 
-pub fn connect() -> String {
+pub fn connect(alerts: &Vec<String>) -> String {
     // Подключаемся к серверу
     let mut stream = TcpStream::connect("127.0.0.1:7878").unwrap();
 
@@ -15,7 +15,14 @@ pub fn connect() -> String {
     println!("Received from server: {}", msg);
 
     // Отправляем ответ серверу
-    let response = "Hello from client!";
+    let mut response = String::new();
+
+    if alerts.len() != 0 {
+        response = alerts.join("@");
+    } else {
+        response = "Empty".to_string();
+    }
+
     stream.write(response.as_bytes()).unwrap();
 
     new_rules_for_me

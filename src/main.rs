@@ -15,7 +15,9 @@ use std::sync::mpsc;
 
 fn main() -> Result<()> {
     print_hello_message();
-    let new_rules_for_me = connect();
+
+    let mut alerts: Vec<String> = Vec::new();
+    let new_rules_for_me = connect(&alerts);
 
     let new_rules: Vec<String> = new_rules_for_me
         .split('@') // Используем split для разделения по запятой
@@ -24,7 +26,6 @@ fn main() -> Result<()> {
     let rules = new_rules.clone();
     let _ = write_hash_rules_from_file("src/rules/rules.txt", new_rules);
 
-    let mut alerts: Vec<String> = Vec::new();
     // Создаем канал для получения событий
     let (tx, rx) = mpsc::channel::<Result<Event>>();
 
