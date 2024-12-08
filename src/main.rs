@@ -12,12 +12,23 @@ use notify::{recommended_watcher, Event, EventKind, RecursiveMode, Result, Watch
 use std::io;
 use std::path::Path;
 use std::sync::mpsc;
+use std::sync::{Arc, Mutex};
 
 fn main() -> Result<()> {
     print_hello_message();
 
-    let mut alerts: Vec<String> = Vec::new();
-    let new_rules_for_me = connect(&alerts);
+    let alerts: Arc<Mutex<Vec<String>>> = Arc::new(Mutex::new(Vec::new()));
+    let alerts_clone = Arc::clone(&alerts);
+
+    ctrlc::set_handler(move || {
+        println!("Получен сигнал Ctrl+C! Выход из функции слежения");
+        let alerts = alerts_clone.lock().unwrap();
+        connect(&*alerts);
+        return;
+    })
+    .expect("Ошибка при установке обработчика Ctrl+C");
+
+    let new_rules_for_me = connect(&*alerts.lock().unwrap());
 
     let new_rules: Vec<String> = new_rules_for_me
         .split('@') // Используем split для разделения по запятой
@@ -52,7 +63,10 @@ fn main() -> Result<()> {
                     for path in event.paths.iter() {
                         let math_res = matching_rules(&rules, path.to_path_buf());
                         if math_res {
-                            alerts.push(String::from(path.to_str().unwrap()));
+                            alerts
+                                .lock()
+                                .unwrap()
+                                .push(String::from(path.to_str().unwrap()));
                         }
                     }
                 }
