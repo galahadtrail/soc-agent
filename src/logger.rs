@@ -15,7 +15,7 @@ pub fn write_current_dt_to_log(path: &str, success: &str, content: &str) -> io::
 
     let curr_dt = format!("{}", gimme_date_and_time());
     let result = format!(
-        "DT: {} ID: {} SUCCESS: {} CONTENT: {}",
+        "DT: {} ID: {} SUCCESS: {} CONTENT: {}\n",
         curr_dt, 0, success, content
     );
 
