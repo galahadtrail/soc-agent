@@ -1,11 +1,13 @@
 pub mod cheching;
 pub mod connection;
 pub mod greetings;
+pub mod logger;
 
 use cheching::{matching_rules, write_hash_rules_from_file};
 use connection::connect;
 use greetings::print_hello_message;
 
+use crate::logger::write_current_dt_to_log;
 use colored::*;
 use notify::event::{CreateKind, ModifyKind};
 use notify::{recommended_watcher, Event, EventKind, RecursiveMode, Result, Watcher};
@@ -17,6 +19,7 @@ use std::sync::{Arc, Mutex};
 
 fn main() -> Result<()> {
     print_hello_message();
+    let _ = write_current_dt_to_log("logs/power.log", "success", "program runs!");
 
     let alerts: Arc<Mutex<Vec<String>>> = Arc::new(Mutex::new(Vec::new()));
     let alerts_sendable: Arc<Mutex<Vec<String>>> = Arc::clone(&alerts);
@@ -69,6 +72,14 @@ fn main() -> Result<()> {
                                 "Achtung! {}",
                                 String::from(canonicalize(path).unwrap().to_str().unwrap())
                             );
+                            let _ = write_current_dt_to_log(
+                                "logs/alerts.log",
+                                "success",
+                                &format!(
+                                    "Achtung! {}",
+                                    String::from(canonicalize(path).unwrap().to_str().unwrap())
+                                ),
+                            );
                             alerts_clone_wr
                                 .lock()
                                 .unwrap()
@@ -81,5 +92,6 @@ fn main() -> Result<()> {
         }
     }
 
+    let _ = write_current_dt_to_log("logs/power.log", "success", "program exits!");
     Ok(())
 }
