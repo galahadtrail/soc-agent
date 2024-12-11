@@ -23,12 +23,9 @@ fn main() -> Result<()> {
 
     let alerts: Arc<Mutex<Vec<String>>> = Arc::new(Mutex::new(Vec::new()));
     let alerts_sendable: Arc<Mutex<Vec<String>>> = Arc::clone(&alerts);
-    let alerts_clone_wr = Arc::clone(&alerts);
 
     ctrlc::set_handler(move || {
         println!("Получен сигнал Ctrl+C! Выход из функции слежения");
-        let alerts_clone = Arc::clone(&alerts);
-        connect(alerts_clone);
         std::process::exit(0);
     })
     .expect("Ошибка при установке обработчика Ctrl+C");
@@ -80,10 +77,13 @@ fn main() -> Result<()> {
                                     String::from(canonicalize(path).unwrap().to_str().unwrap())
                                 ),
                             );
-                            alerts_clone_wr
+                            let l_alerts: Arc<Mutex<Vec<String>>> =
+                                Arc::new(Mutex::new(Vec::new()));
+                            l_alerts
                                 .lock()
                                 .unwrap()
                                 .push(String::from(canonicalize(path).unwrap().to_str().unwrap()));
+                            connect(l_alerts);
                         }
                     }
                 }
