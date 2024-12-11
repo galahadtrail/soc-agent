@@ -5,7 +5,7 @@ use std::sync::{Arc, Mutex};
 
 pub fn connect(alerts: Arc<Mutex<Vec<String>>>) -> String {
     // Подключаемся к серверу
-    let mut stream = TcpStream::connect("127.0.0.1:7878").unwrap();
+    let mut stream = TcpStream::connect("192.168.17.23:7878").unwrap();
 
     // Читаем сообщение от сервера
     let mut buffer = [0; 1024];
